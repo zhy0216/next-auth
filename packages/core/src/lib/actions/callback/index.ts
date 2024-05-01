@@ -28,6 +28,7 @@ import {
   verifyAuthenticate,
   verifyRegister,
 } from "../../utils/webauthn-utils.js"
+import { fromDate } from "../../utils/date"
 
 /** Handle callbacks from login services */
 export async function callback(
@@ -364,6 +365,11 @@ export async function callback(
         })
 
         cookies.push(...sessionCookies)
+        await adapter?.createSession({
+            sessionToken: newToken,
+            userId: user.id,
+            expires: fromDate(options.session.maxAge),
+        })
       }
 
       await events.signIn?.({ user, account })
